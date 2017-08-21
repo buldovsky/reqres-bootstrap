@@ -25,34 +25,36 @@ define(['./field'], function(field_class){
 
             var modal = function(){
 
-                if(_this.stopModal) return
-                
-                _this.stopModal = true
+                //if(_this.stopModal) return
+                //_this.stopModal = true
                 
                 // приписываем иекущее значение
                 var val = $(input).val()
                 if(val !== '') val = '&rid='+val
                 
+                /*
                 _this.objectDeferred = $.Deferred().done(function(modal, object){
                     
-                    _this.stopModal = false
-
-                    // после закрытия списка убираем 
-                    modal.hide(function(){
-                        _this.$input_value.val('')
-                    })
-
-                    modal.get().find('.' + object.options.classes.search_class).val( _this.$input_value.val() ).focus().change()
+                    //_this.stopModal = false
 
                 })
                 .fail(function(){
 
-                    _this.stopModal = false
                     
                 })
-                
+                */
                     
-                $.ajax({ url: _this.$input.attr('data-modal-uri') + val, context: _this })
+                $.ajax({ url: _this.$input.attr('data-modal-uri') + val, context: _this }).on('protocolObjectList', function(e, List, Modal){
+                    
+                    // после закрытия списка убираем 
+                    modal.hide(function(){ _this.$input_value.val('') })
+
+                    modal.get().find('.' + object.options.classes.search).val( _this.$input_value.val() ).focus()
+                    
+                    //List.active().scroll(modal.whenOpened())
+                    //_this.stopModal = false
+                    
+                })
                 
             }
             
@@ -66,6 +68,7 @@ define(['./field'], function(field_class){
             
         },
 
+        /*
         setObject: function(modal, object){
           
             // подтверждаем ранее созданный Deferred
@@ -76,6 +79,7 @@ define(['./field'], function(field_class){
             return this
             
         },
+        */
         
         /**
          *
@@ -85,9 +89,15 @@ define(['./field'], function(field_class){
          * @var Field - класс поля || undefined
          *
          */
-        setUrlParam: function(param, Field){
+        setUrlParam: function(param, arg){
 
-            this.urlParams[param] = (Field === undefined) ? undefined : Field.systemValue()
+            // у нас может быть в качестве параметра придти поле
+            var param_str = (arg instanceof field_class) ? arg.valueSystem() : arg
+            
+            if(typeof param_str !== 'string') param_str = ''
+            
+            
+            this.urlParams[param] = param_str
                 
             var url = this.urlTemplate
             $.each(this.urlParams, function(par, value){
@@ -102,52 +112,79 @@ define(['./field'], function(field_class){
         },
         
         
+        usedBy: function(Field, param){
+            
+            var _this = this
+            
+            Field.disabled(true)
+            
+            this.change(function(){ 
+                
+                if(!Field) return;
+				// сбрасываем контакт, и выключаем поле на время
+                Field.reset().disabled(true)
+
+                Field.setUrlParam(param, _this).disabled(false)
+
+            }, true)
+            
+        },
+        
+        /**
+         *
+         * 
+         *
+         */  
+        _setPretty: function(value){
+
+            // проставляем значение в readonly
+            this.collection.readonly_container.text(value._text)
+            
+        },        
+        
         _reset: function(){
 
-            this.val(['', ''])
+            this.val({ _rid:'', _text:''})
+
+        },
+        
+        _getValue: function(){
+
+            return this.valueObject
 
         },
         
         _setValue: function(value){
 
-            
-            if($.isArray(value)){
+            if(typeof value !== 'object') return false
 
-                this.value = value
-                this.$input.val(value[0])
-                this.$input_value.attr('placeholder', value[1])
+            this.valueObject = value
+            this.$input.val(value._rid)
+            this.$input_value.attr('placeholder', value._text)
                 
-            } else this.$input.val(value)
-
         },
-        
+
         _getValueSystem: function(){
 
             return this.$input.val()
+            
+            var value = this.val()
+            if(value === undefined) return undefined
+            if(!value._rid) return undefined
+            return value._rid
+            
+        },
+		
+		
+        _getValuePretty: function(val){
+
+            //return this.$input_value.attr('placeholder')
+            return val._text
 
         },
+		
 
-        _getValue: function(){
-
-            return this.value
-
-        },
-
-		/*
-        _getValuePretty: function(){
-
-            return this._getValue()[1]
-
-        },
-		*/
-        
-        _getPretty: function(){
-
-            return this._getValue()[1]
-
-        },        
-                              
-    });     
+    });
 
 
 })

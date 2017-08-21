@@ -21,7 +21,23 @@ define(['./field'], function(fieldClass){
                 _this.val($(this).prop('checked'))
 
             })
+            
+            // активируем нажатие на label p 
+            // почему label p а не label
+            // потомучто сама галочка у нас находится тоже внутри label
+            this.root.find('label p').click(function(){
+                
+                _this.valInvert()
+                
+            })
 
+        },
+        
+        valInvert: function(value){
+
+            this.val( !this.val() )
+            return this
+            
         },
 
         _setValue: function(value){
@@ -45,10 +61,10 @@ define(['./field'], function(fieldClass){
          *
          *
          */  
-        _getValuePretty: function(){
+        _getValuePretty: function(val){
             
-            return this._getValue() ? 'Да' : 'Нет'
-
+            return val ? 'Да' : 'Нет'
+            
         },      
 
     });

@@ -4,7 +4,7 @@
  *
  *
  */
-define(['./field', 'jquery-number'], function(fieldClass){
+define(['./field-float', 'jquery-number'], function(fieldClass){
 
 
     return fieldClass.extend({
@@ -27,16 +27,10 @@ define(['./field', 'jquery-number'], function(fieldClass){
                 
             })
 
-            /*
-            // ограничиваем ввод только числами
-            this.$input.keydown(function(e){
-
-                //console.log(e)
-
-            })
-            */
+            this.decLength = this.$input.attr('dec') || 0
+            
         },
-
+        
         /**
          *
          * Возвращаем текущее значение
@@ -45,24 +39,25 @@ define(['./field', 'jquery-number'], function(fieldClass){
          */  
         _getValue: function(){
             
-            var x = parseInt(this.$input.val())
+            var value = parseInt(this.$input.inputmask('unmaskedvalue'))
             
-            return isNaN(x) ? 0 : x
+            return isNaN(value) ? 0 : value
 
-        },
+        },        
         
+
         /**
          *
          * Возвращаем текущее значение в читемом виде HTML
          *
          *
          */  
-        _getValuePretty: function(){
+        _getValuePretty: function(val){
             
-            return $.number(this._getValue(), 0, '.')
-
-        },        
-
+            return $.number(val, 0, '.')
+            
+        }
+        
     });
 
 });

@@ -16,52 +16,79 @@ define(['./field', 'reqres-classes/form'], function(field_class, formClass){
             
             this.subtypes = {}
             var x
+
+            var Form = formClass.around(this.cont)
+            if(!Form instanceof formClass) return
+
+            Form.fields(function(key, Field, index, lastfield){
+
+                    // первый элемент не заносим
+                    if(!x){ x = true; return; }
+                    _this.subtypes[key] = Field
+
+
+                    // при изменении поля будем менять и нас
+                    Field.change(function(){  _this.change()  })
+                      
+
+                    // после загрузки всех полей проверяем
+					if(lastfield) {
+                        
+                        // если хоть одно подполе имеет значение, присаиваем нам его
+                        $.each(_this.subtypes, function(key, Field){
+                            if(Field.val() !== undefined)
+                                _this.val(Field.$input.attr('name'))
+                        })
+                        
+                        _this.$input.trigger('onload')
+                        
+                    }
+
+                }, this.cont)
             
-            formClass.around(this.cont).fields(function(key, Field, index){
-
-                // первый элемент не заносим
-                if(!x){ x = true; return; }
-                _this.subtypes[key] = Field
-                
-                // при изменении поля будем менять и нас
-                Field.change(function(){
-                    
-                    _this.change(true)
-                    
-                })
-
-            }, this.cont)
 
             this.cont.find('.change_button').click(function(){
                 
                 _this.val('')
                 
             })
-            
-            this.$input.change(function(){
 
-                var val = $(this).val()
+
+            this.change(function(e, Field, OldField, val){
+
                 $.each(_this.subtypes, function(key, Field){
                     Field.cont.toggle(key === val)
                 })
                 _this.root.toggle(val === '')
 
                 _this.change()
-                
-            })
 
+            }) 
             
         },
 
+        
         /**
          *
-         * Возвращаем активные поля вместо текущих значений
+         * Добавляем обработчик события после загрузки всех подполей
          *
+         */
+        onload: function(handler){
+            
+            this.$input.on('onload', handler)
+            
+            return this
+            
+        },
+        
+        /**
+         *
+         * Возвращаем классы полей вместо текущих значений
          *
          */         
         _change: function(val, oldval){
 
-            return [ !val ? undefined : this.subtypes[val], !oldval ? undefined : this.subtypes[oldval] ]
+            return [ !val ? undefined : this.subtypes[val], !oldval ? undefined : this.subtypes[oldval], val ]
             
         },
 

@@ -4,7 +4,7 @@
  *
  *
  */
-define(['./field'], function(fc){
+define(['./field', '/bower/jquery.inputmask/extra/phone-codes/phone.js', '/bower/jquery.inputmask/extra/phone-codes/phone-ru.js'], function(fc){ // 'inputmask'
     
     return fc.extend({
 
@@ -14,37 +14,37 @@ define(['./field'], function(fc){
 
             var _this = this
 
-            this.$code1 = this.root.find('input[type=text]').eq(0)
-            this.$code2 = this.root.find('input[type=text]').eq(1)
-            this.$number = this.root.find('input[type=text]').eq(2)
-
-            this.$code1.add(this.$code2).add(this.$number).on('input', function(){
-                
-                var value = _this.$code1.val() + '-' + _this.$code2.val() + '-' + _this.$number.val()
-                _this.$input.val( value )
-
-            })
-
+			this.$input.inputmask("phoneru", {
+                onKeyValidation: function () {
+                  
+                	//console.log($(this).inputmask("getmetadata"));
+					// region, city                  
+                  
+                }
+            }) 
+           
+        },
+        
+        _setValue: function(value){
+        
+            if(value[0] == '7') value = value.substr(1)
+            this.$input.val(value)
+            
         },
 
-        _setValue: function(value){
-
-            var val = value.split('-')
-            if(val.length == 1){
-
-                this.$number.val(val[0])
-                return
-
-            }
-            this.$code1.val(val[0])
-            this.$code2.val(val[1])
+        _getValueSystem: function(){
+        
+			return this.val().replace(/[\_\-\+]/g, '').replace(/[\(\)]/g, '-')
             
-            this.$number.val(val.splice(2).join('-'))
-
-            this.$input.val(value)
-
-        }           
-
+        },
+        
+        _getValuePretty: function(val){
+        
+            // !!! слишком долго при большом количестве строк
+            return Inputmask.format(val, { alias: "phoneru" })
+            
+        },
+        
     });     
 
 });

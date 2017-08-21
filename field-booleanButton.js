@@ -48,9 +48,9 @@ define(['./field'], function(fieldClass){
          *
          *
          */  
-        _getValuePretty: function(){
+        _getValuePretty: function(val){
             
-            return this._getValue() ? 'Да' : 'Нет'
+            return val ? 'Да' : 'Нет'
 
         },      
 

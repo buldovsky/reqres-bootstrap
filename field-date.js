@@ -13,17 +13,15 @@ define(['./field', 'moment', 'bootstrap3-datetimepicker'], function(fieldClass, 
             this._super(input)
             var _this = this
 
-            this.$input_value = this.root.find('input:eq(1)')
-            
-                .on('dp.change', function(){
+            this.$input.on('dp.change', function(){
 
-                    _this._setValue( moment($(this).val(), "DD.MM.YYYY") )
+                    _this._setValue( moment(this.value, "DD.MM.YYYY") )
                     _this.change()
 
                 })
                 .datetimepicker({
 
-                    //calendarWeeks: true,                
+                    //calendarWeeks: true,
                     locale: 'ru',
                     format:'DD.MM.YYYY',
 
@@ -31,7 +29,7 @@ define(['./field', 'moment', 'bootstrap3-datetimepicker'], function(fieldClass, 
 
             var $button = this.root.find('.calendar_button').click(function(){ 
             
-                _this.$input_value.focus()
+                _this.$input.focus()
                 
             })
             
@@ -48,6 +46,11 @@ define(['./field', 'moment', 'bootstrap3-datetimepicker'], function(fieldClass, 
 
         },
 
+        _reset: function(){
+          
+            this.$input.val('')
+            
+        },        
         
         _setValue: function(value){
 
@@ -55,29 +58,32 @@ define(['./field', 'moment', 'bootstrap3-datetimepicker'], function(fieldClass, 
             
             this.moment = value
             
-            this.$input.val(value.format("YYYY.MM.DD"))
-            this.$input_value.val(value.format("DD.MM.YYYY"))
+            this.$input.val(value.format("DD.MM.YYYY"))
             
             return value
 
         },
-
         
         _getValue: function(){
 
-            return this.moment
+            if(!this.moment) return ''
+            // возвращаем копию объекта
+            return this.moment.clone()
+            //return moment(this.moment)
 
         },
 
-        _getValuePretty: function(){
+        _getValuePretty: function(val){
 
-            return this.moment.format("DD.MM.YYYY")
+            if(typeof val == 'string') val = moment(val, "YYYY-MM-DD")
+			return val.format("DD.MM.YYYY")
 
         },        
         
         _getValueSystem: function(){
 
-            return this.$input.val()
+            if(!this._getValue()) return ''
+            return this._getValue().format("YYYY-MM-DD")
 
         },
         

@@ -3,7 +3,7 @@
  * Класс Полей
  * 
  */
-define(['reqres-classes/field', 'reqres-classes/form'], function(fieldClass, formClass){
+define(['reqres-classes/field', 'reqres-classes/form', 'inputmask'], function(fieldClass, formClass){ // , 'inputmask-multi'
     
     return fieldClass.extend({
 
@@ -63,9 +63,10 @@ define(['reqres-classes/field', 'reqres-classes/form'], function(fieldClass, for
          * Инициализация второй волны когда первая уже прошла полностью вся
          *
          *
-         */         
+         * /         
         oninit: function(){
 
+            alert('!')
             this.readonly( this.root.attr('readonly') === "readonly" )
 
         },
