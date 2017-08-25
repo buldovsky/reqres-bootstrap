@@ -16,7 +16,7 @@
     "url": "https://github.com/buldovsky/reqres-bootstrap/issues"
   },
   "dependencies": {
-    "bootstrap": "^3.3.7",
+    "bootstrap": "^3.3.7"
   },  
   "homepage": "https://github.com/buldovsky/reqres-bootstrap#readme"
 }
