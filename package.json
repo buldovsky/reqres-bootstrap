@@ -1,0 +1,19 @@
+{
+  "name": "@reqres/bootstrap",
+  "version": "1.0.0",
+  "description": "Reqres framework classes using with Bootstrap framework",
+  "main": "field.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/buldovsky/reqres-bootstrap.git"
+  },
+  "author": "Max Buldovsky",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/buldovsky/reqres-bootstrap/issues"
+  },
+  "homepage": "https://github.com/buldovsky/reqres-bootstrap#readme"
+}
